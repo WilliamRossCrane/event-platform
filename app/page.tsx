@@ -1,5 +1,4 @@
-import Hello from "./components/hello";
-import hello from "./components/hello"
+import Hello from "@/components/hello";
 
 const page = () => {
   console.log('what type of component am I?');
