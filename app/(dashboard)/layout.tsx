@@ -1,5 +1,10 @@
 import React from "react";
 
+export const metadata = {
+  title: "Dashboard",
+  description: "Dashboard layout for the application",
+};
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
