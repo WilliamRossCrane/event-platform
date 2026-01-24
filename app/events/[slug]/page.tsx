@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import BookEvent from "@/components/BookEvent";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -12,7 +13,7 @@ const EventDetailItem = ({
   alt: string;
   label: string;
 }) => (
-  <div className="flex-row-gap-2 items-center">
+  <div className="flex flex-row gap-2 items-center">
     <Image src={icon} alt={alt} width={17} height={17} />
     <p>{label}</p>
   </div>
@@ -46,23 +47,32 @@ const EventDetailsPage = async ({
 }) => {
   const { slug } = await params;
   const request = await fetch(`${BASE_URL}/api/events/${slug}`);
-  const {
-    event: {
-      description,
-      image,
-      overview,
-      date,
-      time,
-      location,
-      mode,
-      agenda,
-      audience,
-      tags,
-      organizer,
-    },
-  } = await request.json();
 
-  if (!description) return notFound();
+  if (!request.ok) {
+    return notFound();
+  }
+
+  const data = await request.json();
+
+  if (!data?.event) {
+    return notFound();
+  }
+
+  const {
+    description,
+    image,
+    overview,
+    date,
+    time,
+    location,
+    mode,
+    agenda,
+    audience,
+    tags,
+    organizer,
+  } = data.event;
+
+  const bookings = 10;
 
   return (
     <section id="event">
@@ -114,10 +124,22 @@ const EventDetailsPage = async ({
 
           <EventTags tags={JSON.parse(tags[0])} />
         </div>
-        {/* Right Side - Booking Form */}
 
+        {/* Right Side - Booking Form */}
         <aside className="booking">
-          <p className="text-lg font-semibold">Book Event</p>
+          <div className="signup-card">
+            <h2>Book Your Spot</h2>
+            {bookings > 0 ? (
+              <p className="text-sm">
+                {" "}
+                Join {bookings} people who have already booked their spot!
+              </p>
+            ) : (
+              <p className="text-sm">Be the first to book your spot!</p>
+            )}
+
+            <BookEvent />
+          </div>
         </aside>
       </div>
     </section>
