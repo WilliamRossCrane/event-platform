@@ -28,8 +28,8 @@ const EventAgenda = ({ agendaItems }: { agendaItems: string[] }) => (
   <div className="agenda">
     <h2>Agenda</h2>
     <ul>
-      {agendaItems.map((item) => (
-        <li key={item}>{item}</li>
+      {agendaItems.map((item, index) => (
+        <li key={index}>{item}</li>
       ))}
     </ul>
   </div>
@@ -121,7 +121,6 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
       </div>
 
       <div className="details">
-        {/*    Left Side - Event Content */}
         <div className="content">
           <Image
             src={image}
@@ -164,7 +163,6 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
           <EventTags tags={tags} />
         </div>
 
-        {/*    Right Side - Booking Form */}
         <aside className="booking">
           <div className="signup-card">
             <h2>Book Your Spot</h2>
@@ -176,7 +174,7 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
               <p className="text-sm">Be the first to book your spot!</p>
             )}
 
-            <BookEvent eventId={event._id} slug={event.slug} />
+            <BookEvent eventId={_id} slug={event.slug} />
           </div>
         </aside>
       </div>
@@ -186,7 +184,7 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
         <div className="events">
           {similarEvents.length > 0 &&
             similarEvents.map((similarEvent: IEvent) => (
-              <EventCard key={similarEvent._id} {...similarEvent} />
+              <EventCard key={String(similarEvent._id)} {...similarEvent} />
             ))}
         </div>
       </div>

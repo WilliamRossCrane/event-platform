@@ -1,6 +1,7 @@
 # 🎉 Events Platform
 
 ![Project Status](https://img.shields.io/badge/status-complete-brightgreen)
+
 This project is functionally complete, with minor optimizations and refinements ongoing.
 
 This project is a **Dev Events Platform** built during the [JavaScript Mastery](https://jsmastery.pro/) Next.js 16 Crash Course. It demonstrates how to create a **modern**, **scalable**, and **fully functional** event management platform with CRUD capabilities, image uploads, analytics, and cutting-edge caching.
