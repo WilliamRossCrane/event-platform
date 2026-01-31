@@ -4,6 +4,7 @@ import BookEvent from "@/components/BookEvent";
 import { IEvent } from "@/database";
 import EventCard from "@/components/EventCard";
 import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
+import { Suspense } from "react";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -43,13 +44,30 @@ const EventTags = ({ tags }: { tags: string[] }) => (
   </div>
 );
 
+const SimilarEvents = async ({ slug }: { slug: string }) => {
+  const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
+
+  if (similarEvents.length === 0) return null;
+
+  return (
+    <div className="events">
+      {similarEvents.map((similarEvent: IEvent) => (
+        <EventCard key={similarEvent.title} {...similarEvent} />
+      ))}
+    </div>
+  );
+};
+
 const EventDetailsPage = async ({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await params;
-  const request = await fetch(`${BASE_URL}/api/events/${slug}`);
+
+  const request = await fetch(`${BASE_URL}/api/events/${slug}`, {
+    next: { revalidate: 3600 },
+  });
 
   if (!request.ok) {
     return notFound();
@@ -77,8 +95,6 @@ const EventDetailsPage = async ({
 
   const bookings = 10;
 
-  const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug);
-
   return (
     <section id="event">
       <div className="header">
@@ -87,7 +103,7 @@ const EventDetailsPage = async ({
       </div>
 
       <div className="details">
-        {/* Left Side - Event Content  */}
+        {/* Left Side - Event Content */}
         <div className="content">
           <Image
             src={image}
@@ -127,7 +143,7 @@ const EventDetailsPage = async ({
             <p>{organizer}</p>
           </section>
 
-          <EventTags tags={JSON.parse(tags[0])} />
+          <EventTags tags={tags} />
         </div>
 
         {/* Right Side - Booking Form */}
@@ -136,7 +152,6 @@ const EventDetailsPage = async ({
             <h2>Book Your Spot</h2>
             {bookings > 0 ? (
               <p className="text-sm">
-                {" "}
                 Join {bookings} people who have already booked their spot!
               </p>
             ) : (
@@ -147,14 +162,12 @@ const EventDetailsPage = async ({
           </div>
         </aside>
       </div>
-    
+
       <div className="flex w-full flex-col gap-4 pt-20">
-            <h2>Similar Events</h2>
-            <div className="events">
-              {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
-                <EventCard key={similarEvent.title} {...similarEvent}/>
-              ))}
-            </div>
+        <h2>Similar Events</h2>
+        <Suspense fallback={<p>Loading similar events…</p>}>
+          <SimilarEvents slug={slug} />
+        </Suspense>
       </div>
     </section>
   );
